@@ -1,0 +1,58 @@
+﻿@model ASP_FinancialProductWishList.ViewModels.LoginViewModel
+
+@{
+    ViewData["Title"] = "登入";
+}
+
+<div class="row justify-content-center">
+    <div class="col-12 col-md-6 col-lg-5">
+        <h1 class="h2 mb-4">會員登入</h1>
+
+        @if (TempData["SuccessMessage"] is string message)
+        {
+            <div class="alert alert-success">
+                @message
+            </div>
+        }
+
+        <form asp-action="Login" method="post">
+            <input asp-for="ReturnUrl" type="hidden" />
+
+            <div asp-validation-summary="ModelOnly"
+                 class="text-danger mb-3"></div>
+
+            <div class="mb-3">
+                <label asp-for="UserName"
+                       class="form-label"></label>
+                <input asp-for="UserName"
+                       class="form-control"
+                       autocomplete="username" />
+                <span asp-validation-for="UserName"
+                      class="text-danger"></span>
+            </div>
+
+            <div class="mb-3">
+                <label asp-for="Password"
+                       class="form-label"></label>
+                <input asp-for="Password"
+                       class="form-control"
+                       autocomplete="current-password" />
+                <span asp-validation-for="Password"
+                      class="text-danger"></span>
+            </div>
+
+            <button type="submit"
+                    class="btn btn-primary w-100">
+                登入
+            </button>
+        </form>
+
+        <div class="text-center mt-3">
+            <a asp-action="Register">尚未註冊？建立帳號</a>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}
