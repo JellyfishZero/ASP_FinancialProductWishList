@@ -1,8 +1,10 @@
+using ASP_FinancialProductWishList.Models.Entities;
 using ASP_FinancialProductWishList.Repositories;
 using ASP_FinancialProductWishList.Repositories.Implementations;
 using ASP_FinancialProductWishList.Repositories.Interfaces;
 using ASP_FinancialProductWishList.Services.Implementations;
 using ASP_FinancialProductWishList.Services.Interfaces;
+using Microsoft.AspNetCore.Identity;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -12,6 +14,9 @@ builder.Services.AddControllersWithViews();
 builder.Services.AddSingleton<IDbConnectionFactory, SqlConnectionFactory>();
 builder.Services.AddScoped<IProductRepository, ProductRepository>();
 builder.Services.AddScoped<IProductService, ProductService>();
+builder.Services.AddScoped<IUserRepository, UserRepository>();
+builder.Services.AddScoped<IPasswordHasher<User>, PasswordHasher<User>>();
+builder.Services.AddScoped<IAccountService, AccountService>();
 
 var app = builder.Build();
 
