@@ -1,3 +1,4 @@
+using ASP_FinancialProductWishList.Authentication;
 using ASP_FinancialProductWishList.Models.Entities;
 using ASP_FinancialProductWishList.Repositories;
 using ASP_FinancialProductWishList.Repositories.Implementations;
@@ -21,6 +22,8 @@ builder.Services.AddScoped<IAccountService, AccountService>();
 builder.Services.AddScoped<ILikeListRepository, LikeListRepository>();
 builder.Services.AddScoped<ILikeListService, LikeListService>();
 
+builder.Services.AddScoped<ApplicationCookieEvents>();
+
 builder
     .Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
     .AddCookie(options =>
@@ -36,6 +39,8 @@ builder
 
         options.ExpireTimeSpan = TimeSpan.FromHours(8);
         options.SlidingExpiration = true;
+
+        options.EventsType = typeof(ApplicationCookieEvents);
     });
 
 var app = builder.Build();
