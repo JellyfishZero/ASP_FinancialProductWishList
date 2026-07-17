@@ -1,0 +1,47 @@
+﻿@model IReadOnlyList<ASP_FinancialProductWishList.ViewModels.ProductListItemViewModel>
+
+@{
+    ViewData["Title"] = "金融商品";
+}
+
+<div class="container py-4">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h1 class="h2 mb-0">金融商品</h1>
+        <span class="text-muted">共 @Model.Count 項</span>
+    </div>
+
+    @if (Model.Count == 0)
+    {
+        <div class="alert alert-info">
+            目前沒有可顯示的金融商品。
+        </div>
+    }
+    else
+    {
+        <div class="table-responsive">
+            <table class="table table-striped table-hover align-middle">
+                <thead>
+                    <tr>
+                        <th scope="col">商品名稱</th>
+                        <th scope="col" class="text-end">價格</th>
+                        <th scope="col" class="text-end">手續費率</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var product in Model)
+                    {
+                        <tr>
+                            <td>@product.ProductName</td>
+                            <td class="text-end">
+                                NT$ @product.Price.ToString("N2")
+                            </td>
+                            <td class="text-end">
+                                @product.FeeRate.ToString("P2")
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    }
+</div>
