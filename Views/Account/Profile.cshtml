@@ -1,0 +1,71 @@
+﻿@model ASP_FinancialProductWishList.ViewModels.ProfileViewModel
+
+@{
+    ViewData["Title"] = "會員資料";
+}
+
+<div class="row justify-content-center">
+    <div class="col-12 col-md-8 col-lg-6">
+        <h1 class="h2 mb-4">會員資料</h1>
+
+        @if (TempData["SuccessMessage"] is string message)
+        {
+            <div class="alert alert-success">
+                @message
+            </div>
+        }
+
+        <form asp-action="Profile" method="post">
+            <div asp-validation-summary="ModelOnly"
+                 class="text-danger mb-3"></div>
+
+            <div class="mb-3">
+                <label asp-for="UserName"
+                       class="form-label"></label>
+                <input asp-for="UserName"
+                       class="form-control"
+                       readonly />
+            </div>
+
+            <div class="mb-3">
+                <label asp-for="Name"
+                       class="form-label"></label>
+                <input asp-for="Name"
+                       class="form-control"
+                       readonly />
+            </div>
+
+            <div class="mb-3">
+                <label asp-for="Email"
+                       class="form-label"></label>
+                <input asp-for="Email"
+                       class="form-control"
+                       readonly />
+            </div>
+
+            <div class="mb-3">
+                <label asp-for="DebitAccount"
+                       class="form-label"></label>
+                <input asp-for="DebitAccount"
+                       class="form-control"
+                       inputmode="numeric"
+                       autocomplete="off" />
+                <span asp-validation-for="DebitAccount"
+                      class="text-danger"></span>
+            </div>
+
+            <div class="alert alert-info">
+                修改扣款帳號後，所有喜好清單項目都會使用新帳號。
+            </div>
+
+            <button type="submit"
+                    class="btn btn-primary">
+                儲存扣款帳號
+            </button>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

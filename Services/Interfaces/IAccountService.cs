@@ -11,5 +11,13 @@ namespace ASP_FinancialProductWishList.Services.Interfaces
         );
 
         Task<User?> LoginAsync(LoginRequest request, CancellationToken cancellationToken = default);
+
+        Task<User?> GetProfileAsync(long userID, CancellationToken cancellationToken = default);
+
+        Task<User> UpdateDebitAccountAsync(
+            long userID,
+            UpdateDebitAccountRequest request,
+            CancellationToken cancellationToken = default
+        );
     }
 }
