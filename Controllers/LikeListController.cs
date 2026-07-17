@@ -110,6 +110,110 @@ namespace ASP_FinancialProductWishList.Controllers
             return RedirectToAction(nameof(Index));
         }
 
+        [HttpGet]
+        public async Task<IActionResult> Edit(long id, CancellationToken cancellationToken)
+        {
+            if (id <= 0)
+            {
+                return NotFound();
+            }
+
+            var userID = User.GetRequiredUserID();
+
+            var item = await _likeListService.GetByIdAsync(id, userID, cancellationToken);
+
+            if (item is null)
+            {
+                // 包含資料不存在或不屬於目前使用者。
+                return NotFound();
+            }
+
+            var model = new LikeListFormViewModel
+            {
+                ProductID = item.ProductID,
+                Quantity = item.Quantity,
+            };
+
+            await PopulateProductsAsync(model, cancellationToken);
+
+            return View(model);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Edit(
+            long id,
+            LikeListFormViewModel model,
+            CancellationToken cancellationToken
+        )
+        {
+            if (id <= 0)
+            {
+                return NotFound();
+            }
+
+            if (!ModelState.IsValid)
+            {
+                await PopulateProductsAsync(model, cancellationToken);
+
+                return View(model);
+            }
+
+            var userID = User.GetRequiredUserID();
+
+            var request = new SaveLikeListRequest
+            {
+                ProductID = model.ProductID,
+                Quantity = model.Quantity,
+            };
+
+            try
+            {
+                await _likeListService.UpdateAsync(id, userID, request, cancellationToken);
+            }
+            catch (InvalidProductException exception)
+            {
+                ModelState.AddModelError(nameof(model.ProductID), exception.Message);
+
+                await PopulateProductsAsync(model, cancellationToken);
+
+                return View(model);
+            }
+            catch (LikeListItemNotFoundException)
+            {
+                return NotFound();
+            }
+
+            TempData["SuccessMessage"] = "已更新喜好項目。";
+
+            return RedirectToAction(nameof(Index));
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Delete(long id, CancellationToken cancellationToken)
+        {
+            if (id <= 0)
+            {
+                return NotFound();
+            }
+
+            var userID = User.GetRequiredUserID();
+
+            try
+            {
+                await _likeListService.DeleteAsync(id, userID, cancellationToken);
+            }
+            catch (LikeListItemNotFoundException)
+            {
+                return NotFound();
+            }
+
+            TempData["SuccessMessage"] = "已刪除喜好項目。";
+
+            return RedirectToAction(nameof(Index));
+        }
+
         private async Task PopulateProductsAsync(
             LikeListFormViewModel model,
             CancellationToken cancellationToken
