@@ -113,5 +113,55 @@ namespace ASP_FinancialProductWishList.Services.Implementations
 
             return user;
         }
+
+        public Task<User?> GetProfileAsync(
+            long userID,
+            CancellationToken cancellationToken = default
+        )
+        {
+            if (userID <= 0)
+            {
+                throw new ArgumentOutOfRangeException(nameof(userID), "使用者 ID 必須大於 0。");
+            }
+
+            return _userRepository.GetByIdAsync(userID, cancellationToken);
+        }
+
+        public async Task<User> UpdateDebitAccountAsync(
+            long userID,
+            UpdateDebitAccountRequest request,
+            CancellationToken cancellationToken = default
+        )
+        {
+            if (userID <= 0)
+            {
+                throw new ArgumentOutOfRangeException(nameof(userID), "使用者 ID 必須大於 0。");
+            }
+
+            ArgumentNullException.ThrowIfNull(request);
+
+            var debitAccount = request.DebitAccount.Trim();
+
+            if (
+                debitAccount.Length is < 10 or > 20
+                || debitAccount.Any(character => character is < '0' or > '9')
+            )
+            {
+                throw new ArgumentException("扣款帳號須為 10 至 20 位數字。", nameof(request));
+            }
+
+            try
+            {
+                return await _userRepository.UpdateDebitAccountAsync(
+                    userID,
+                    debitAccount,
+                    cancellationToken
+                );
+            }
+            catch (SqlException exception) when (exception.Number == 51002)
+            {
+                throw new UserNotFoundException(exception);
+            }
+        }
     }
 }

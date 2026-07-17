@@ -1,6 +1,7 @@
 ﻿using System.Globalization;
 using System.Security.Claims;
 using ASP_FinancialProductWishList.Common.Exceptions;
+using ASP_FinancialProductWishList.Common.Extensions;
 using ASP_FinancialProductWishList.Services.DTOs;
 using ASP_FinancialProductWishList.Services.Interfaces;
 using ASP_FinancialProductWishList.ViewModels;
@@ -165,6 +166,73 @@ namespace ASP_FinancialProductWishList.Controllers
         public IActionResult AccessDenied()
         {
             return View();
+        }
+
+        [Authorize]
+        [HttpGet]
+        public async Task<IActionResult> Profile(CancellationToken cancellationToken)
+        {
+            var userID = User.GetRequiredUserID();
+
+            var user = await _accountService.GetProfileAsync(userID, cancellationToken);
+
+            if (user is null)
+            {
+                return NotFound();
+            }
+
+            var model = new ProfileViewModel
+            {
+                UserName = user.UserName,
+                Name = user.Name,
+                Email = user.Email,
+                DebitAccount = user.DebitAccount,
+            };
+
+            return View(model);
+        }
+
+        [Authorize]
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Profile(
+            ProfileViewModel model,
+            CancellationToken cancellationToken
+        )
+        {
+            var userID = User.GetRequiredUserID();
+
+            if (!ModelState.IsValid)
+            {
+                var currentUser = await _accountService.GetProfileAsync(userID, cancellationToken);
+
+                if (currentUser is null)
+                {
+                    return NotFound();
+                }
+
+                // 不信任 POST 回來的唯讀欄位。
+                model.UserName = currentUser.UserName;
+                model.Name = currentUser.Name;
+                model.Email = currentUser.Email;
+
+                return View(model);
+            }
+
+            var request = new UpdateDebitAccountRequest { DebitAccount = model.DebitAccount };
+
+            try
+            {
+                await _accountService.UpdateDebitAccountAsync(userID, request, cancellationToken);
+            }
+            catch (UserNotFoundException)
+            {
+                return NotFound();
+            }
+
+            TempData["SuccessMessage"] = "扣款帳號已更新。";
+
+            return RedirectToAction(nameof(Profile));
         }
     }
 }

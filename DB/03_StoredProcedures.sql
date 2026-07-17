@@ -140,7 +140,7 @@ BEGIN
         product.Price,
         product.FeeRate,
         wish.Quantity,
-        member.DebitAccount,
+        wish.DebitAccount,
         member.Email
     FROM dbo.LikeList AS wish
     INNER JOIN dbo.Product AS product
@@ -167,7 +167,7 @@ BEGIN
         product.Price,
         product.FeeRate,
         wish.Quantity,
-        member.DebitAccount,
+        wish.DebitAccount,
         member.Email
     FROM dbo.LikeList AS wish
     INNER JOIN dbo.Product AS product
@@ -180,9 +180,10 @@ END;
 GO
 
 CREATE OR ALTER PROCEDURE dbo.usp_LikeList_Create
-    @UserID     BIGINT,
-    @ProductID  INT,
-    @Quantity   INT
+    @UserID         BIGINT,
+    @ProductID      INT,
+    @DebitAccount   VARCHAR(20),
+    @Quantity       INT
 AS
 BEGIN
     SET NOCOUNT ON;
@@ -190,9 +191,26 @@ BEGIN
     IF @Quantity <= 0
         THROW 51010, N'購買數量必須大於 0。', 1;
 
+    IF @DebitAccount IS NULL
+       OR LEN(@DebitAccount) NOT BETWEEN 10 AND 20
+       OR @DebitAccount LIKE '%[^0-9]%'
+        THROW 51014, N'扣款帳號須為 10 至 20 位數字。', 1;
+
     BEGIN TRY
-        INSERT INTO dbo.LikeList (UserID, ProductID, Quantity)
-        VALUES (@UserID, @ProductID, @Quantity);
+        INSERT INTO dbo.LikeList
+        (
+            UserID,
+            ProductID,
+            DebitAccount,
+            Quantity
+        )
+        VALUES
+        (
+            @UserID,
+            @ProductID,
+            @DebitAccount,
+            @Quantity
+        );
 
         DECLARE @LikeListID BIGINT = CONVERT(BIGINT, SCOPE_IDENTITY());
 
@@ -201,9 +219,6 @@ BEGIN
             @UserID = @UserID;
     END TRY
     BEGIN CATCH
-        IF ERROR_NUMBER() IN (2601, 2627)
-            THROW 51011, N'此金融商品已存在於喜好清單。', 1;
-
         IF ERROR_NUMBER() = 547
             THROW 51012, N'使用者或金融商品不存在。', 1;
 
@@ -213,10 +228,11 @@ END;
 GO
 
 CREATE OR ALTER PROCEDURE dbo.usp_LikeList_Update
-    @LikeListID BIGINT,
-    @UserID     BIGINT,
-    @ProductID  INT,
-    @Quantity   INT
+    @LikeListID     BIGINT,
+    @UserID         BIGINT,
+    @ProductID      INT,
+    @DebitAccount   VARCHAR(20),
+    @Quantity       INT
 AS
 BEGIN
     SET NOCOUNT ON;
@@ -224,9 +240,15 @@ BEGIN
     IF @Quantity <= 0
         THROW 51010, N'購買數量必須大於 0。', 1;
 
+    IF @DebitAccount IS NULL
+       OR LEN(@DebitAccount) NOT BETWEEN 10 AND 20
+       OR @DebitAccount LIKE '%[^0-9]%'
+        THROW 51014, N'扣款帳號須為 10 至 20 位數字。', 1;
+
     BEGIN TRY
         UPDATE dbo.LikeList
         SET ProductID = @ProductID,
+            DebitAccount = @DebitAccount,
             Quantity = @Quantity
         WHERE LikeListID = @LikeListID
           AND UserID = @UserID;
@@ -239,9 +261,6 @@ BEGIN
             @UserID = @UserID;
     END TRY
     BEGIN CATCH
-        IF ERROR_NUMBER() IN (2601, 2627)
-            THROW 51011, N'此金融商品已存在於喜好清單。', 1;
-
         IF ERROR_NUMBER() = 547
             THROW 51012, N'金融商品不存在。', 1;
 

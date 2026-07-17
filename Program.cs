@@ -18,20 +18,18 @@ builder.Services.AddScoped<IProductService, ProductService>();
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<IPasswordHasher<User>, PasswordHasher<User>>();
 builder.Services.AddScoped<IAccountService, AccountService>();
+builder.Services.AddScoped<ILikeListRepository, LikeListRepository>();
+builder.Services.AddScoped<ILikeListService, LikeListService>();
 
-builder.Services
-    .AddAuthentication(
-        CookieAuthenticationDefaults.AuthenticationScheme
-    )
+builder
+    .Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
     .AddCookie(options =>
     {
-        options.Cookie.Name =
-            ".ASP_FinancialProductWishList.Auth";
+        options.Cookie.Name = ".ASP_FinancialProductWishList.Auth";
 
         options.Cookie.HttpOnly = true;
         options.Cookie.SameSite = SameSiteMode.Lax;
-        options.Cookie.SecurePolicy =
-            CookieSecurePolicy.Always;
+        options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
 
         options.LoginPath = "/Account/Login";
         options.AccessDeniedPath = "/Account/AccessDenied";
