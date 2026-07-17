@@ -25,6 +25,7 @@
                         <th scope="col">商品名稱</th>
                         <th scope="col" class="text-end">價格</th>
                         <th scope="col" class="text-end">手續費率</th>
+                        <th scope="col" class="text-end">操作</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -37,6 +38,14 @@
                             </td>
                             <td class="text-end">
                                 @product.FeeRate.ToString("P2")
+                            </td>
+                            <td class="text-end">
+                                <a asp-controller="LikeList"
+                                   asp-action="Create"
+                                   asp-route-productID="@product.ProductID"
+                                   class="btn btn-sm btn-outline-primary">
+                                    加入喜好清單
+                                </a>
                             </td>
                         </tr>
                     }

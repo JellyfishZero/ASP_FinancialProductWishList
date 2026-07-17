@@ -66,10 +66,6 @@ namespace ASP_FinancialProductWishList.Services.Implementations
 
                 return MapResult(item);
             }
-            catch (SqlException exception) when (exception.Number == 51011)
-            {
-                throw new DuplicateLikeListItemException(exception);
-            }
             catch (SqlException exception) when (exception.Number == 51012)
             {
                 throw new InvalidProductException(exception);
@@ -98,10 +94,6 @@ namespace ASP_FinancialProductWishList.Services.Implementations
                 );
 
                 return MapResult(item);
-            }
-            catch (SqlException exception) when (exception.Number == 51011)
-            {
-                throw new DuplicateLikeListItemException(exception);
             }
             catch (SqlException exception) when (exception.Number == 51012)
             {

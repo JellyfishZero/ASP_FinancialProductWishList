@@ -58,7 +58,7 @@ BEGIN TRY
         Quantity      INT NOT NULL,
 
         CONSTRAINT PK_LikeList PRIMARY KEY CLUSTERED (LikeListID),
-        CONSTRAINT UQ_LikeList_User_Product UNIQUE (UserID, ProductID),
+
         CONSTRAINT FK_LikeList_User FOREIGN KEY (UserID)
             REFERENCES dbo.[User] (UserID),
         CONSTRAINT FK_LikeList_Product FOREIGN KEY (ProductID)

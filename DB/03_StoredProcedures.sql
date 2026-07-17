@@ -201,9 +201,6 @@ BEGIN
             @UserID = @UserID;
     END TRY
     BEGIN CATCH
-        IF ERROR_NUMBER() IN (2601, 2627)
-            THROW 51011, N'此金融商品已存在於喜好清單。', 1;
-
         IF ERROR_NUMBER() = 547
             THROW 51012, N'使用者或金融商品不存在。', 1;
 
@@ -239,9 +236,6 @@ BEGIN
             @UserID = @UserID;
     END TRY
     BEGIN CATCH
-        IF ERROR_NUMBER() IN (2601, 2627)
-            THROW 51011, N'此金融商品已存在於喜好清單。', 1;
-
         IF ERROR_NUMBER() = 547
             THROW 51012, N'金融商品不存在。', 1;
 

@@ -23,6 +23,12 @@
                         <li class="nav-item">
                             <a class="nav-link text-dark" asp-controller="Product" asp-action="Index">金融商品</a>
                         </li>
+                        @if (User.Identity?.IsAuthenticated == true)
+                        {
+                            <li class="nav-item">
+                                <a class="nav-link text-dark" asp-controller="LikeList" asp-action="Index">我的喜好清單</a>
+                            </li>
+                        }
                     </ul>
 
                     <ul class="navbar-nav">
