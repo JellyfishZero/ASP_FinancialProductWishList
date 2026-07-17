@@ -55,6 +55,7 @@ BEGIN TRY
         LikeListID    BIGINT IDENTITY(1, 1) NOT NULL,
         UserID        BIGINT NOT NULL,
         ProductID     INT NOT NULL,
+        DebitAccount  VARCHAR(20) NOT NULL,
         Quantity      INT NOT NULL,
 
         CONSTRAINT PK_LikeList PRIMARY KEY CLUSTERED (LikeListID),
@@ -63,6 +64,12 @@ BEGIN TRY
             REFERENCES dbo.[User] (UserID),
         CONSTRAINT FK_LikeList_Product FOREIGN KEY (ProductID)
             REFERENCES dbo.Product (ProductID),
+        CONSTRAINT CK_LikeList_DebitAccount
+            CHECK
+            (
+                LEN(DebitAccount) BETWEEN 10 AND 20
+                AND DebitAccount NOT LIKE '%[^0-9]%'
+            ),
         CONSTRAINT CK_LikeList_Quantity CHECK (Quantity > 0)
     );
 

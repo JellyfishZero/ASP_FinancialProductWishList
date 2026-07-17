@@ -30,6 +30,23 @@
             </div>
 
             <div class="mb-3">
+                <label asp-for="DebitAccount"
+                       class="form-label"></label>
+
+                <input asp-for="DebitAccount"
+                       class="form-control"
+                       inputmode="numeric"
+                       autocomplete="off" />
+
+                <div class="form-text">
+                    已帶入會員預設帳號；本次可改用其他帳號。
+                </div>
+
+                <span asp-validation-for="DebitAccount"
+                      class="text-danger"></span>
+            </div>
+
+            <div class="mb-3">
                 <label asp-for="Quantity"
                        class="form-label"></label>
 

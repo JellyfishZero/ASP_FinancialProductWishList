@@ -18,6 +18,7 @@ namespace ASP_FinancialProductWishList.Repositories.Interfaces
         Task<LikeListItem> CreateAsync(
             long userID,
             int productID,
+            string debitAccount,
             int quantity,
             CancellationToken cancellationToken = default
         );
@@ -26,6 +27,7 @@ namespace ASP_FinancialProductWishList.Repositories.Interfaces
             long likeListID,
             long userID,
             int productID,
+            string debitAccount,
             int quantity,
             CancellationToken cancellationToken = default
         );

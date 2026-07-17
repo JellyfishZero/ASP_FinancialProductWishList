@@ -60,6 +60,7 @@ namespace ASP_FinancialProductWishList.Services.Implementations
                 var item = await _likeListRepository.CreateAsync(
                     userID,
                     request.ProductID,
+                    request.DebitAccount.Trim(),
                     request.Quantity,
                     cancellationToken
                 );
@@ -89,6 +90,7 @@ namespace ASP_FinancialProductWishList.Services.Implementations
                     likeListID,
                     userID,
                     request.ProductID,
+                    request.DebitAccount.Trim(),
                     request.Quantity,
                     cancellationToken
                 );
@@ -172,6 +174,19 @@ namespace ASP_FinancialProductWishList.Services.Implementations
                 throw new ArgumentOutOfRangeException(
                     nameof(request.Quantity),
                     "購買數量必須大於 0。"
+                );
+            }
+
+            var debitAccount = request.DebitAccount.Trim();
+
+            if (
+                debitAccount.Length is < 10 or > 20
+                || debitAccount.Any(character => character is < '0' or > '9')
+            )
+            {
+                throw new ArgumentException(
+                    "扣款帳號須為 10 至 20 位數字。",
+                    nameof(request.DebitAccount)
                 );
             }
         }

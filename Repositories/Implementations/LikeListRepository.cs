@@ -67,6 +67,7 @@ namespace ASP_FinancialProductWishList.Repositories.Implementations
         public async Task<LikeListItem> CreateAsync(
             long userID,
             int productID,
+            string debitAccount,
             int quantity,
             CancellationToken cancellationToken = default
         )
@@ -82,6 +83,8 @@ namespace ASP_FinancialProductWishList.Repositories.Implementations
             AddParameter(command, "@UserID", DbType.Int64, userID);
 
             AddParameter(command, "@ProductID", DbType.Int32, productID);
+
+            AddParameter(command, "@DebitAccount", DbType.AnsiString, debitAccount, 20);
 
             AddParameter(command, "@Quantity", DbType.Int32, quantity);
 
@@ -101,6 +104,7 @@ namespace ASP_FinancialProductWishList.Repositories.Implementations
             long likeListID,
             long userID,
             int productID,
+            string debitAccount,
             int quantity,
             CancellationToken cancellationToken = default
         )
@@ -118,6 +122,8 @@ namespace ASP_FinancialProductWishList.Repositories.Implementations
             AddParameter(command, "@UserID", DbType.Int64, userID);
 
             AddParameter(command, "@ProductID", DbType.Int32, productID);
+
+            AddParameter(command, "@DebitAccount", DbType.AnsiString, debitAccount, 20);
 
             AddParameter(command, "@Quantity", DbType.Int32, quantity);
 
@@ -161,12 +167,23 @@ namespace ASP_FinancialProductWishList.Repositories.Implementations
             }
         }
 
-        private static void AddParameter(DbCommand command, string name, DbType type, object value)
+        private static void AddParameter(
+            DbCommand command,
+            string name,
+            DbType type,
+            object value,
+            int? size = null
+        )
         {
             var parameter = command.CreateParameter();
             parameter.ParameterName = name;
             parameter.DbType = type;
             parameter.Value = value;
+
+            if (size.HasValue)
+            {
+                parameter.Size = size.Value;
+            }
 
             command.Parameters.Add(parameter);
         }

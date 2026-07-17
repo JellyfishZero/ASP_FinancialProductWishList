@@ -15,11 +15,17 @@ namespace ASP_FinancialProductWishList.Controllers
     {
         private readonly ILikeListService _likeListService;
         private readonly IProductService _productService;
+        private readonly IAccountService _accountService;
 
-        public LikeListController(ILikeListService likeListService, IProductService productService)
+        public LikeListController(
+            ILikeListService likeListService,
+            IProductService productService,
+            IAccountService accountService
+        )
         {
             _likeListService = likeListService;
             _productService = productService;
+            _accountService = accountService;
         }
 
         [HttpGet]
@@ -63,7 +69,21 @@ namespace ASP_FinancialProductWishList.Controllers
                 return NotFound();
             }
 
-            var model = new LikeListFormViewModel { ProductID = product.ProductID, Quantity = 1 };
+            var userID = User.GetRequiredUserID();
+
+            var user = await _accountService.GetProfileAsync(userID, cancellationToken);
+
+            if (user is null)
+            {
+                return NotFound();
+            }
+
+            var model = new LikeListFormViewModel
+            {
+                ProductID = product.ProductID,
+                DebitAccount = user.DebitAccount,
+                Quantity = 1,
+            };
 
             await PopulateProductsAsync(model, cancellationToken);
 
@@ -89,6 +109,7 @@ namespace ASP_FinancialProductWishList.Controllers
             var request = new SaveLikeListRequest
             {
                 ProductID = model.ProductID,
+                DebitAccount = model.DebitAccount,
                 Quantity = model.Quantity,
             };
 
@@ -131,6 +152,7 @@ namespace ASP_FinancialProductWishList.Controllers
             var model = new LikeListFormViewModel
             {
                 ProductID = item.ProductID,
+                DebitAccount = item.DebitAccount,
                 Quantity = item.Quantity,
             };
 
@@ -164,6 +186,7 @@ namespace ASP_FinancialProductWishList.Controllers
             var request = new SaveLikeListRequest
             {
                 ProductID = model.ProductID,
+                DebitAccount = model.DebitAccount,
                 Quantity = model.Quantity,
             };
 
